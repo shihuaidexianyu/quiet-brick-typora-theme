@@ -1,0 +1,632 @@
+/*
+ * Quiet Brick for Typora
+ * 跟随系统深浅色；无外部资源、脚本、动画、滤镜或阴影。
+ * 字体全部使用本机字体，正文大小可通过 Typora 偏好设置调整。
+ */
+
+:root {
+  color-scheme: light;
+
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono: "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+
+  --bg-color: #f7f7f7;
+  --text-color: #383838;
+  --heading-color: #222222;
+  --title-color: #8a5147;
+  --muted-color: #696969;
+  --faint-color: #7b7b7b;
+  --accent-color: #555555;
+  --accent-strong-color: #333333;
+  --accent-contrast-color: #ffffff;
+  --surface-color: #fcfcfc;
+  --surface-raised-color: #ececec;
+  --side-bar-bg-color: #f0f0f0;
+  --border-color: #d9d9d9;
+  --link-underline-color: #a0a0a0;
+  --selection-bg-color: #dcdcdc;
+  --quote-text-color: #626262;
+  --inline-code-color: #454545;
+  --mark-bg-color: #efdddd;
+  --mark-text-color: #633f43;
+
+  --syntax-comment: #697164;
+  --syntax-keyword: #76557f;
+  --syntax-string: #536e4e;
+  --syntax-number: #965845;
+  --syntax-def: #444444;
+  --syntax-variable: #454545;
+  --syntax-type: #6c6258;
+  --syntax-operator: #666666;
+  --syntax-error: #a24842;
+
+  /* Typora 官方变量：让侧栏、文件列表和控件沿用同一配色。 */
+  --md-char-color: var(--faint-color);
+  --meta-content-color: var(--muted-color);
+  --primary-color: var(--accent-color);
+  --primary-btn-border-color: var(--accent-color);
+  --primary-btn-text-color: var(--accent-contrast-color);
+  --window-border: 1px solid var(--border-color);
+  --active-file-bg-color: var(--surface-raised-color);
+  --active-file-text-color: var(--heading-color);
+  --active-file-border-color: var(--accent-color);
+  --item-hover-bg-color: var(--surface-raised-color);
+  --item-hover-text-color: var(--heading-color);
+  --control-text-color: var(--text-color);
+  --rawblock-edit-panel-bd: var(--surface-color);
+  --select-text-bg-color: var(--selection-bg-color);
+  --select-text-font-color: var(--text-color);
+  --search-select-bg-color: var(--selection-bg-color);
+  --monospace: var(--font-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --bg-color: #1c1c1c;
+    --text-color: #cdcdcd;
+    --heading-color: #e5e5e5;
+    --title-color: #c9978d;
+    --muted-color: #a0a0a0;
+    --faint-color: #858585;
+    --accent-color: #c6c6c6;
+    --accent-strong-color: #e3e3e3;
+    --accent-contrast-color: #1c1c1c;
+    --surface-color: #232323;
+    --surface-raised-color: #2b2b2b;
+    --side-bar-bg-color: #171717;
+    --border-color: #383838;
+    --link-underline-color: #767676;
+    --selection-bg-color: #454545;
+    --quote-text-color: #b9b9b9;
+    --inline-code-color: #d3d3d3;
+    --mark-bg-color: #443434;
+    --mark-text-color: #e3cbcd;
+
+    --syntax-comment: #969c94;
+    --syntax-keyword: #c1a9c7;
+    --syntax-string: #afc0a5;
+    --syntax-number: #d0a08f;
+    --syntax-def: #d6d0c8;
+    --syntax-variable: #cdcdcd;
+    --syntax-type: #b7b3ad;
+    --syntax-operator: #b0b0b0;
+    --syntax-error: #dfa09a;
+  }
+}
+
+html {
+  font-size: 16.5px;
+  background-color: var(--bg-color);
+}
+
+html,
+body {
+  color: var(--text-color);
+  font-family: var(--font-body);
+}
+
+body {
+  background-color: var(--bg-color);
+}
+
+::selection {
+  background-color: var(--selection-bg-color);
+}
+
+#write {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 42px 48px 88px;
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.85;
+  letter-spacing: 0.005em;
+  caret-color: var(--accent-color);
+}
+
+#write > :first-child {
+  margin-top: 0;
+}
+
+#write p {
+  margin: 0 0 1.05em;
+}
+
+#write h1,
+#write h2,
+#write h3,
+#write h4,
+#write h5,
+#write h6 {
+  color: var(--title-color);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+#write h1 {
+  margin: 0 0 1.35em;
+  padding-bottom: 0.55em;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 2rem;
+  letter-spacing: 0;
+}
+
+/* 标题只通过字号、字重和留白建立层级。 */
+#write h2 {
+  margin: 2.1em 0 0.85em;
+  font-size: 1.5rem;
+}
+
+#write h3 {
+  margin: 1.8em 0 0.7em;
+  font-size: 1.22rem;
+}
+
+#write h4 {
+  margin: 1.55em 0 0.6em;
+  font-size: 1.08rem;
+}
+
+#write h5 {
+  margin: 1.4em 0 0.55em;
+  font-size: 1rem;
+}
+
+#write h6 {
+  margin: 1.3em 0 0.5em;
+  font-size: 0.92rem;
+}
+
+#write strong {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+#write a {
+  color: var(--accent-color);
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline-color);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+#write a:hover {
+  color: var(--accent-strong-color);
+  text-decoration-color: currentColor;
+}
+
+#write ul,
+#write ol {
+  margin: 0.75em 0 1.05em;
+  padding-left: 1.65em;
+}
+
+#write li {
+  margin: 0.18em 0;
+}
+
+#write li > p {
+  margin: 0.35em 0;
+}
+
+#write li::marker {
+  color: var(--muted-color);
+}
+
+#write input.task-list-item-checkbox {
+  accent-color: var(--accent-color);
+}
+
+#write blockquote {
+  margin: 1.35em 0;
+  padding: 0.55em 1em;
+  border-left: 2px solid var(--border-color);
+  background-color: transparent;
+  color: var(--quote-text-color);
+}
+
+#write blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+#write hr {
+  height: 0;
+  margin: 2.4em 0;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+}
+
+#write code {
+  padding: 0.12em 0.35em;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--surface-raised-color);
+  color: var(--inline-code-color);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+#write pre code {
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+
+#write mark {
+  padding: 0.05em 0.16em;
+  border-radius: 2px;
+  background-color: var(--mark-bg-color);
+  color: var(--mark-text-color);
+}
+
+#write del {
+  color: var(--muted-color);
+}
+
+#write kbd {
+  padding: 0.12em 0.4em;
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+}
+
+#write table {
+  width: 100%;
+  margin: 1.35em 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 0.94em;
+  line-height: 1.6;
+}
+
+#write th,
+#write td {
+  padding: 0.55em 0.75em;
+  border: 1px solid var(--border-color);
+  text-align: left;
+  vertical-align: top;
+}
+
+#write th {
+  background-color: var(--surface-raised-color);
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+#write img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+#write figure {
+  margin: 1.5em 0;
+}
+
+#write figcaption {
+  margin-top: 0.55em;
+  color: var(--muted-color);
+  font-size: 0.88em;
+  text-align: center;
+}
+
+#write .md-def-footnote {
+  color: var(--muted-color);
+  font-size: 0.92em;
+}
+
+#write .md-def-name,
+#write sup.md-footnote {
+  color: var(--accent-color);
+}
+
+#write .md-meta,
+#write .md-content {
+  color: var(--md-char-color);
+}
+
+#write .md-image > .md-meta,
+#write .md-link > .md-content {
+  color: var(--meta-content-color);
+}
+
+#write .mathjax-block,
+#write .MathJax,
+#write .MathJax_Display,
+#write mjx-container {
+  color: var(--text-color);
+}
+
+/* 数学公式与 HTML 的源码编辑面板；不影响下方已渲染的公式。 */
+#write .md-rawblock-control:not(.md-rawblock-tooltip),
+#write .md-rawblock-tooltip {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
+#write .md-rawblock-control .CodeMirror {
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+#write .md-rawblock-control .CodeMirror-linenumber {
+  color: var(--muted-color);
+}
+
+#write .md-search-hit {
+  background-color: var(--selection-bg-color);
+  color: var(--text-color);
+}
+
+#write .md-search-hit * {
+  color: var(--text-color);
+}
+
+#write .md-search-hit.md-search-select {
+  outline: 1px solid var(--accent-color);
+}
+
+#write .CodeMirror .cm-search-hit,
+#write .CodeMirror .cm-searching,
+#typora-source .cm-search-hit,
+#typora-source .cm-searching {
+  background-color: var(--selection-bg-color);
+  color: var(--text-color);
+}
+
+/* 代码块与 YAML：只绘制纯色背景和细边框。 */
+#write pre.md-fences,
+#write pre.md-meta-block {
+  margin: 1.25em 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+#write pre.md-fences.mock-cm,
+#write pre.md-meta-block {
+  padding: 12px 14px;
+  overflow: auto;
+}
+
+#write .CodeMirror,
+#typora-source .CodeMirror {
+  font-family: var(--font-mono);
+}
+
+.cm-s-inner,
+.cm-s-typora-default {
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+.cm-s-inner .CodeMirror-gutters,
+.cm-s-typora-default .CodeMirror-gutters {
+  border-right: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+}
+
+.cm-s-inner .CodeMirror-linenumber,
+.cm-s-typora-default .CodeMirror-linenumber {
+  color: var(--faint-color);
+}
+
+.cm-s-inner .CodeMirror-cursor,
+.cm-s-typora-default .CodeMirror-cursor {
+  border-left: 1px solid var(--accent-color);
+}
+
+.cm-s-inner .CodeMirror-selected,
+.cm-s-inner .CodeMirror-focused .CodeMirror-selected,
+.cm-s-typora-default .CodeMirror-selected,
+.cm-s-typora-default .CodeMirror-focused .CodeMirror-selected {
+  background-color: var(--selection-bg-color);
+}
+
+.cm-s-inner .CodeMirror-matchingbracket,
+.cm-s-typora-default .CodeMirror-matchingbracket {
+  background-color: var(--selection-bg-color);
+  color: var(--accent-strong-color);
+}
+
+.cm-s-inner .cm-comment,
+.cm-s-typora-default .cm-comment {
+  color: var(--syntax-comment);
+  font-style: italic;
+}
+
+.cm-s-inner .cm-keyword,
+.cm-s-inner .cm-atom,
+.cm-s-inner .cm-qualifier,
+.cm-s-typora-default .cm-keyword,
+.cm-s-typora-default .cm-atom,
+.cm-s-typora-default .cm-qualifier {
+  color: var(--syntax-keyword);
+  font-weight: 600;
+}
+
+.cm-s-inner .cm-string,
+.cm-s-inner .cm-string-2,
+.cm-s-typora-default .cm-string,
+.cm-s-typora-default .cm-string-2 {
+  color: var(--syntax-string);
+}
+
+.cm-s-inner .cm-number,
+.cm-s-typora-default .cm-number {
+  color: var(--syntax-number);
+}
+
+.cm-s-inner .cm-def,
+.cm-s-inner .cm-variable-2,
+.cm-s-inner .cm-tag,
+.cm-s-typora-default .cm-def,
+.cm-s-typora-default .cm-variable-2,
+.cm-s-typora-default .cm-tag {
+  color: var(--syntax-def);
+}
+
+.cm-s-inner .cm-variable,
+.cm-s-inner .cm-variable-3,
+.cm-s-typora-default .cm-variable,
+.cm-s-typora-default .cm-variable-3 {
+  color: var(--syntax-variable);
+}
+
+.cm-s-inner .cm-type,
+.cm-s-inner .cm-builtin,
+.cm-s-typora-default .cm-type,
+.cm-s-typora-default .cm-builtin {
+  color: var(--syntax-type);
+}
+
+.cm-s-inner .cm-attribute,
+.cm-s-inner .cm-property,
+.cm-s-typora-default .cm-attribute,
+.cm-s-typora-default .cm-property {
+  color: var(--syntax-keyword);
+}
+
+.cm-s-inner .cm-operator,
+.cm-s-inner .cm-bracket,
+.cm-s-typora-default .cm-operator,
+.cm-s-typora-default .cm-bracket {
+  color: var(--syntax-operator);
+}
+
+.cm-s-inner .cm-header,
+.cm-s-typora-default .cm-header {
+  color: var(--title-color);
+}
+
+.cm-s-inner .cm-link,
+.cm-s-typora-default .cm-link {
+  color: var(--accent-color);
+}
+
+.cm-s-inner .cm-meta,
+.cm-s-typora-default .cm-meta {
+  color: var(--syntax-comment);
+}
+
+.cm-s-inner .cm-error,
+.cm-s-typora-default .cm-error {
+  color: var(--syntax-error);
+  background-color: transparent;
+  text-decoration: underline wavy;
+}
+
+#typora-source {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+#typora-sidebar {
+  background-color: var(--side-bar-bg-color);
+  color: var(--text-color);
+}
+
+#typora-footer {
+  border-top: var(--window-border);
+  background-color: var(--bg-color);
+  color: var(--muted-color);
+}
+
+/* 动态浮层：避免默认白底、深色嵌套文字或默认蓝色选中态残留。 */
+#write .code-tooltip,
+#write div.md-toc-tooltip,
+#ty-tooltip,
+#ty-auto-suggest,
+.context-menu,
+.dropdown-menu,
+.modal-content,
+#typora-quick-open,
+#spell-check-panel,
+#footer-word-count-info,
+#md-searchpanel {
+  border-color: var(--border-color);
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
+.code-tooltip-content * {
+  color: unset;
+}
+
+.context-menu > li > a,
+.dropdown-menu > li > a {
+  color: var(--text-color);
+}
+
+.context-menu > li > a:hover,
+.dropdown-menu > li > a:hover,
+#ty-auto-suggest li:hover,
+#ty-auto-suggest li.active {
+  background-color: var(--surface-raised-color);
+  color: var(--heading-color);
+}
+
+#typora-sidebar input,
+#md-searchpanel input,
+#typora-quick-open input,
+.modal-content .form-control {
+  border-color: var(--border-color);
+  background-color: var(--surface-raised-color);
+  color: var(--text-color);
+}
+
+.modal-content .btn-default {
+  border-color: var(--border-color);
+  background-color: var(--surface-color);
+  color: var(--text-color);
+}
+
+.modal-content .btn-default:hover,
+.searchpanel-search-option-btn.active,
+#ty-sidebar-search-tabs .searchpanel-search-option-btn.select {
+  background-color: var(--surface-raised-color);
+  color: var(--heading-color);
+}
+
+.context-menu .divider,
+.dropdown-menu .divider {
+  border-color: var(--border-color);
+}
+
+.ty-table-edit {
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+@media (max-width: 720px) {
+  #write {
+    padding: 28px 22px 64px;
+  }
+
+  #write h1 {
+    font-size: 1.75rem;
+  }
+
+  #write h2 {
+    font-size: 1.35rem;
+  }
+}
