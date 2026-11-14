@@ -786,11 +786,56 @@ body {
 }
 
 /* ========== 打印 / 导出 PDF ==========
- * 1. 无论系统是否为深色模式，都使用白纸浅色配色（深色配色只在 screen 下生效）。
+ * 1. Typora（macOS）导出 PDF 时，会在屏幕媒体下先读取 body.typora-print 的背景色来绘制页边距，
+ *    因此这里同时覆盖 body.typora-print 与 @media print，彻底避免深色模式下出现黑边或黑底。
  * 2. 正文加深、细线加粗，灰阶打印机上也能看清表格线、引用线和代码块边界。
  * 3. 代码强制自动换行，避免长行在纸面上被截断。
  * 4. 控制分页：标题不落在页尾，引用、提示块、图片、表格行不被拆开。
  */
+:root:has(> body.typora-print) {
+  color-scheme: light;
+  --bg-color: #ffffff;
+}
+
+body.typora-print {
+  color-scheme: light;
+
+  --bg-color: #ffffff;
+  --text-color: #222222;
+  --heading-color: #000000;
+  --title-color: #7a4238;
+  --muted-color: #555555;
+  --faint-color: #666666;
+  --accent-color: #222222;
+  --accent-strong-color: #000000;
+  --surface-color: #f6f6f6;
+  --surface-raised-color: #eeeeee;
+  --border-color: #bdbdbd;
+  --rule-color: #8f8f8f;
+  --table-border-color: #a6a6a6;
+  --link-underline-color: #777777;
+  --quote-text-color: #444444;
+  --inline-code-color: #333333;
+  --mark-bg-color: #f0d9d9;
+  --mark-text-color: #4a2a2e;
+
+  --alert-note: #3d5675;
+  --alert-tip: #3e5c3f;
+  --alert-important: #5e4774;
+  --alert-warning: #6b501a;
+  --alert-caution: #8f3530;
+
+  --syntax-comment: #575e53;
+  --syntax-keyword: #66456f;
+  --syntax-string: #43603e;
+  --syntax-number: #84462f;
+  --syntax-def: #222222;
+  --syntax-variable: #333333;
+  --syntax-type: #5a5046;
+  --syntax-operator: #555555;
+  --syntax-error: #8f3530;
+}
+
 @media print {
   :root {
     color-scheme: light;
