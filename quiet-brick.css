@@ -1,16 +1,17 @@
 /*
  * Quiet Brick for Typora
- * 跟随系统深浅色；无外部资源、脚本、动画、滤镜或阴影。
- * 字体全部使用本机字体，正文大小可通过 Typora 偏好设置调整。
+ * 屏幕上跟随系统深浅色；打印与导出 PDF 始终使用浅色打印配色。
+ * 无外部资源、脚本、动画、滤镜或阴影；字体全部使用本机字体。
  */
 
+/* ========== 浅色（默认）配色 ========== */
 :root {
   color-scheme: light;
 
   --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans CJK SC", sans-serif;
+  --font-heading: var(--font-body);
   --font-mono: "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas,
     "Liberation Mono", monospace;
 
@@ -18,23 +19,35 @@
   --text-color: #383838;
   --heading-color: #222222;
   --title-color: #8a5147;
-  --muted-color: #696969;
-  --faint-color: #7b7b7b;
+  --muted-color: #666666;
+  --faint-color: #707070;
   --accent-color: #555555;
   --accent-strong-color: #333333;
   --accent-contrast-color: #ffffff;
   --surface-color: #fcfcfc;
   --surface-raised-color: #ececec;
   --side-bar-bg-color: #f0f0f0;
-  --border-color: #d9d9d9;
-  --link-underline-color: #a0a0a0;
-  --selection-bg-color: #dcdcdc;
-  --quote-text-color: #626262;
+  --border-color: #cfcfcf;
+  --rule-color: #adadad;
+  --table-border-color: #c8c8c8;
+  --link-underline-color: #949494;
+  --selection-bg-color: #d3d3d3;
+  --quote-text-color: #5e5e5e;
   --inline-code-color: #454545;
-  --mark-bg-color: #efdddd;
-  --mark-text-color: #633f43;
+  --mark-bg-color: #ecd5d5;
+  --mark-text-color: #5e3a3e;
+  --search-hit-bg-color: #e5cd9c;
+  --search-select-bg-color: #8a5147;
+  --search-select-text-color: #ffffff;
+  --blur-text-color: #c2c2c2;
 
-  --syntax-comment: #697164;
+  --alert-note: #4b6584;
+  --alert-tip: #4b6b4c;
+  --alert-important: #6f5685;
+  --alert-warning: #7e5f22;
+  --alert-caution: #a24842;
+
+  --syntax-comment: #646c5f;
   --syntax-keyword: #76557f;
   --syntax-string: #536e4e;
   --syntax-number: #965845;
@@ -44,9 +57,10 @@
   --syntax-operator: #666666;
   --syntax-error: #a24842;
 
-  /* Typora 官方变量：让侧栏、文件列表和控件沿用同一配色。 */
+  /* Typora 官方变量：让侧栏、文件列表、搜索和控件沿用同一配色。 */
   --md-char-color: var(--faint-color);
   --meta-content-color: var(--muted-color);
+  --heading-char-color: var(--rule-color);
   --primary-color: var(--accent-color);
   --primary-btn-border-color: var(--accent-color);
   --primary-btn-text-color: var(--accent-contrast-color);
@@ -57,14 +71,20 @@
   --item-hover-bg-color: var(--surface-raised-color);
   --item-hover-text-color: var(--heading-color);
   --control-text-color: var(--text-color);
+  --control-text-hover-color: var(--heading-color);
+  --active-toggle-btn-color: var(--surface-raised-color);
+  --panel-border-color: var(--rule-color);
+  --drag-placeholder-color: var(--border-color);
+  --focus-ring-color: var(--faint-color);
   --rawblock-edit-panel-bd: var(--surface-color);
   --select-text-bg-color: var(--selection-bg-color);
   --select-text-font-color: var(--text-color);
-  --search-select-bg-color: var(--selection-bg-color);
   --monospace: var(--font-mono);
+  --mermaid-theme: neutral;
 }
 
-@media (prefers-color-scheme: dark) {
+/* ========== 深色配色：只作用于屏幕，打印/导出 PDF 不会出现黑底 ========== */
+@media screen and (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
 
@@ -73,20 +93,32 @@
     --heading-color: #e5e5e5;
     --title-color: #c9978d;
     --muted-color: #a0a0a0;
-    --faint-color: #858585;
+    --faint-color: #8e8e8e;
     --accent-color: #c6c6c6;
     --accent-strong-color: #e3e3e3;
     --accent-contrast-color: #1c1c1c;
     --surface-color: #232323;
     --surface-raised-color: #2b2b2b;
     --side-bar-bg-color: #171717;
-    --border-color: #383838;
-    --link-underline-color: #767676;
-    --selection-bg-color: #454545;
+    --border-color: #3d3d3d;
+    --rule-color: #5c5c5c;
+    --table-border-color: #444444;
+    --link-underline-color: #808080;
+    --selection-bg-color: #4a4a4a;
     --quote-text-color: #b9b9b9;
     --inline-code-color: #d3d3d3;
-    --mark-bg-color: #443434;
-    --mark-text-color: #e3cbcd;
+    --mark-bg-color: #4a3838;
+    --mark-text-color: #ead2d4;
+    --search-hit-bg-color: #4f4430;
+    --search-select-bg-color: #c9978d;
+    --search-select-text-color: #1c1c1c;
+    --blur-text-color: #5c5c5c;
+
+    --alert-note: #9fb4cc;
+    --alert-tip: #a6bfa3;
+    --alert-important: #c0abd3;
+    --alert-warning: #d2b47c;
+    --alert-caution: #e0a39d;
 
     --syntax-comment: #969c94;
     --syntax-keyword: #c1a9c7;
@@ -97,9 +129,12 @@
     --syntax-type: #b7b3ad;
     --syntax-operator: #b0b0b0;
     --syntax-error: #dfa09a;
+
+    --mermaid-theme: dark;
   }
 }
 
+/* ========== 基础排版 ========== */
 html {
   font-size: 16.5px;
   background-color: var(--bg-color);
@@ -157,7 +192,6 @@ body {
   padding-bottom: 0.55em;
   border-bottom: 1px solid var(--border-color);
   font-size: 2rem;
-  letter-spacing: 0;
 }
 
 /* 标题只通过字号、字重和留白建立层级。 */
@@ -186,6 +220,15 @@ body {
   font-size: 0.92rem;
 }
 
+#write h1 code,
+#write h2 code,
+#write h3 code,
+#write h4 code,
+#write h5 code,
+#write h6 code {
+  font-size: 0.85em;
+}
+
 #write strong {
   color: var(--heading-color);
   font-weight: 600;
@@ -210,6 +253,12 @@ body {
   padding-left: 1.65em;
 }
 
+/* 嵌套列表不再叠加段落级外边距。 */
+#write li > ul,
+#write li > ol {
+  margin: 0.2em 0;
+}
+
 #write li {
   margin: 0.18em 0;
 }
@@ -222,14 +271,15 @@ body {
   color: var(--muted-color);
 }
 
-#write input.task-list-item-checkbox {
+#write input.task-list-item-checkbox,
+#write .md-task-list-item > input {
   accent-color: var(--accent-color);
 }
 
 #write blockquote {
   margin: 1.35em 0;
   padding: 0.55em 1em;
-  border-left: 2px solid var(--border-color);
+  border-left: 3px solid var(--rule-color);
   background-color: transparent;
   color: var(--quote-text-color);
 }
@@ -242,7 +292,7 @@ body {
   height: 0;
   margin: 2.4em 0;
   border: 0;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--rule-color);
 }
 
 #write code {
@@ -270,6 +320,11 @@ body {
   color: var(--mark-text-color);
 }
 
+/* Typora 默认把高亮里的 == 标记设为纯黑，深色模式下会看不见。 */
+#write mark .md-meta {
+  color: inherit;
+}
+
 #write del {
   color: var(--muted-color);
 }
@@ -285,6 +340,7 @@ body {
   font-size: 0.82em;
 }
 
+/* ========== 表格、图片、脚注 ========== */
 #write table {
   width: 100%;
   margin: 1.35em 0;
@@ -297,7 +353,7 @@ body {
 #write th,
 #write td {
   padding: 0.55em 0.75em;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--table-border-color);
   text-align: left;
   vertical-align: top;
 }
@@ -325,16 +381,96 @@ body {
   text-align: center;
 }
 
+/* Typora 默认给脚注区加了 opacity 与 #888 灰字，对比度不足。 */
+#write .footnotes,
+#write .footnotes-area {
+  color: var(--muted-color);
+  opacity: 1;
+}
+
 #write .md-def-footnote {
   color: var(--muted-color);
   font-size: 0.92em;
 }
 
-#write .md-def-name,
-#write sup.md-footnote {
+#write .md-def-name {
   color: var(--accent-color);
 }
 
+/* 默认脚注角标是固定浅灰底，深色模式下与浅色文字几乎无法分辨。 */
+#write sup.md-footnote {
+  background-color: var(--surface-raised-color);
+  color: var(--accent-color);
+}
+
+/* ========== 目录 [TOC] ========== */
+#write .md-toc {
+  margin: 1.35em 0;
+  font-size: 0.94em;
+}
+
+#write .md-toc-item {
+  color: var(--accent-color);
+}
+
+#write .md-toc-h1 .md-toc-inner {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+/* ========== GitHub 风格提示块 > [!NOTE] 等 ========== */
+#write .md-alert {
+  margin: 1.35em 0;
+  padding: 0.55em 1em;
+  border-left: 3px solid var(--rule-color);
+  color: var(--text-color);
+}
+
+#write .md-alert > :last-child {
+  margin-bottom: 0;
+}
+
+#write .md-alert-note {
+  border-left-color: var(--alert-note);
+}
+
+#write .md-alert-tip {
+  border-left-color: var(--alert-tip);
+}
+
+#write .md-alert-important {
+  border-left-color: var(--alert-important);
+}
+
+#write .md-alert-warning {
+  border-left-color: var(--alert-warning);
+}
+
+#write .md-alert-caution {
+  border-left-color: var(--alert-caution);
+}
+
+#write .md-alert-text-note {
+  color: var(--alert-note);
+}
+
+#write .md-alert-text-tip {
+  color: var(--alert-tip);
+}
+
+#write .md-alert-text-important {
+  color: var(--alert-important);
+}
+
+#write .md-alert-text-warning {
+  color: var(--alert-warning);
+}
+
+#write .md-alert-text-caution {
+  color: var(--alert-caution);
+}
+
+/* ========== Markdown 源码标记与公式 ========== */
 #write .md-meta,
 #write .md-content {
   color: var(--md-char-color);
@@ -368,8 +504,19 @@ body {
   color: var(--muted-color);
 }
 
+/* ========== 搜索命中：普通命中用暖沙色，当前命中用砖红实色 ========== */
+::highlight(search-hit) {
+  background-color: var(--search-hit-bg-color);
+  color: var(--text-color);
+}
+
+::highlight(search-select) {
+  background-color: var(--search-select-bg-color);
+  color: var(--search-select-text-color);
+}
+
 #write .md-search-hit {
-  background-color: var(--selection-bg-color);
+  background-color: var(--search-hit-bg-color);
   color: var(--text-color);
 }
 
@@ -377,19 +524,25 @@ body {
   color: var(--text-color);
 }
 
-#write .md-search-hit.md-search-select {
-  outline: 1px solid var(--accent-color);
+#write .md-search-hit.md-search-select,
+#write .md-search-select {
+  background-color: var(--search-select-bg-color);
+  color: var(--search-select-text-color);
+}
+
+#write .md-search-hit.md-search-select * {
+  color: var(--search-select-text-color);
 }
 
 #write .CodeMirror .cm-search-hit,
 #write .CodeMirror .cm-searching,
 #typora-source .cm-search-hit,
 #typora-source .cm-searching {
-  background-color: var(--selection-bg-color);
+  background-color: var(--search-hit-bg-color);
   color: var(--text-color);
 }
 
-/* 代码块与 YAML：只绘制纯色背景和细边框。 */
+/* ========== 代码块与 YAML：只绘制纯色背景和细边框 ========== */
 #write pre.md-fences,
 #write pre.md-meta-block {
   margin: 1.25em 0;
@@ -535,6 +688,7 @@ body {
   text-decoration: underline wavy;
 }
 
+/* ========== 窗口与控件 ========== */
 #typora-source {
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -617,7 +771,7 @@ body {
   color: var(--text-color);
 }
 
-@media (max-width: 720px) {
+@media screen and (max-width: 720px) {
   #write {
     padding: 28px 22px 64px;
   }
@@ -628,5 +782,137 @@ body {
 
   #write h2 {
     font-size: 1.35rem;
+  }
+}
+
+/* ========== 打印 / 导出 PDF ==========
+ * 1. 无论系统是否为深色模式，都使用白纸浅色配色（深色配色只在 screen 下生效）。
+ * 2. 正文加深、细线加粗，灰阶打印机上也能看清表格线、引用线和代码块边界。
+ * 3. 代码强制自动换行，避免长行在纸面上被截断。
+ * 4. 控制分页：标题不落在页尾，引用、提示块、图片、表格行不被拆开。
+ */
+@media print {
+  :root {
+    color-scheme: light;
+
+    --bg-color: #ffffff;
+    --text-color: #222222;
+    --heading-color: #000000;
+    --title-color: #7a4238;
+    --muted-color: #555555;
+    --faint-color: #666666;
+    --accent-color: #222222;
+    --accent-strong-color: #000000;
+    --surface-color: #f6f6f6;
+    --surface-raised-color: #eeeeee;
+    --border-color: #bdbdbd;
+    --rule-color: #8f8f8f;
+    --table-border-color: #a6a6a6;
+    --link-underline-color: #777777;
+    --quote-text-color: #444444;
+    --inline-code-color: #333333;
+    --mark-bg-color: #f0d9d9;
+    --mark-text-color: #4a2a2e;
+
+    --alert-note: #3d5675;
+    --alert-tip: #3e5c3f;
+    --alert-important: #5e4774;
+    --alert-warning: #6b501a;
+    --alert-caution: #8f3530;
+
+    --syntax-comment: #575e53;
+    --syntax-keyword: #66456f;
+    --syntax-string: #43603e;
+    --syntax-number: #84462f;
+    --syntax-def: #222222;
+    --syntax-variable: #333333;
+    --syntax-type: #5a5046;
+    --syntax-operator: #555555;
+    --syntax-error: #8f3530;
+  }
+
+  /* 五号字（10.5pt）是中文印刷文档的常用正文字号。 */
+  html {
+    font-size: 14px;
+  }
+
+  #write {
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
+    line-height: 1.7;
+  }
+
+  #write p,
+  #write li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  #write h1,
+  #write h2,
+  #write h3,
+  #write h4,
+  #write h5,
+  #write h6 {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  #write h2 {
+    margin-top: 1.7em;
+  }
+
+  #write blockquote,
+  #write .md-alert,
+  #write figure,
+  #write img,
+  #write svg,
+  #write tr,
+  #write .md-math-block,
+  #write .md-diagram-panel {
+    break-inside: avoid;
+  }
+
+  #write table {
+    font-size: 0.9em;
+  }
+
+  /* 背景色承载语义（高亮、表头、代码块），即使系统打印对话框关闭了“背景图形”也要保留。 */
+  #write mark,
+  #write code,
+  #write kbd,
+  #write th,
+  #write sup.md-footnote,
+  #write pre.md-fences,
+  #write pre.md-meta-block {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #write mark {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* 纸面无法滚动：代码块、YAML 一律自动换行，包括关闭了“代码块自动换行”的情况。 */
+  #write pre.md-fences,
+  #write pre.md-meta-block,
+  #write.fences-no-line-wrapping pre.md-fences.mock-cm {
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  #write .CodeMirror pre.CodeMirror-line,
+  #write .CodeMirror pre.CodeMirror-line-like {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  /* 编辑态浮层不进入纸面。 */
+  #write .code-tooltip,
+  #write .md-rawblock-tooltip {
+    display: none;
   }
 }
