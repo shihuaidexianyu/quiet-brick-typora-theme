@@ -50,30 +50,45 @@
 
 预览页是纯 HTML/CSS，没有 JavaScript 依赖，用任意现代浏览器打开即可。
 
-## 安装
+## 安装与更新
+
+### 方式一：直接复制
 
 1. 打开 Typora 的主题文件夹：
    - macOS：`~/Library/Application Support/abnerworks.Typora/themes/`
    - Windows：`%APPDATA%\Typora\themes\`
    - Linux：`~/.config/Typora/themes/`
 2. 把 `quiet-brick.css` 复制进去。
-3. 重启 Typora，或切换到其他主题再切回来。
-4. 在「主题」菜单中选择 **Quiet Brick**。
+3. 重启 Typora，或切换到其他主题再切回 **Quiet Brick**。
 
-如果分别设置了浅色与深色主题，两处都选择 Quiet Brick 即可。
+> 注意：每次拉取或修改本仓库后，都需要重新把最新的 `quiet-brick.css` 覆盖到 Typora 主题目录并重选一次主题，修改才会在 Typora 中生效。
+
+### 方式二：软链接（macOS / Linux 推荐）
+
+如果经常拉取更新或自行调整配色，可以直接把仓库里的 `quiet-brick.css` 软链接到 Typora 主题目录，后续更新仓库无需手动重复复制：
+
+```zsh
+# macOS
+ln -sf "$(pwd)/quiet-brick.css" ~/Library/Application\ Support/abnerworks.Typora/themes/quiet-brick.css
+```
+
+如果分别设置了浅色与深色主题，两处都选择 **Quiet Brick** 即可。
 
 ## 打印与导出 PDF
 
 | 问题 | 处理方式 |
 | --- | --- |
-| 深色模式下导出 PDF 出现黑底或四周大黑边 | macOS 版 Typora 在深色模式下导出 PDF 时，底层 `TyPDFEngine` 会先用当前窗口的深色背景（`#1c1c1c`）涂满整张 PDF 纸面，再把 WebKit 页面叠画上去；而 WebKit 默认只在 `@page` 页边距内部绘制背景。主题在 `@media print` 中通过 `@page :first / :left / :right` 将页面绘制区扩展到整张纸面并铺满纯白底色，再由 `#write` 与块级内边距控制页边留白，彻底消除四周黑边 |
-| 页面灰底、浅灰细线在纸上发虚 | 打印时背景改为纯白，正文加深到 `#222`，表格线、引用线、分隔线加深 |
-| 长代码行被纸张边缘截断 | 代码块与 YAML 强制自动换行，即使关闭了「代码块自动换行」 |
-| 高亮、表头、代码块底色在系统打印对话框中丢失 | 对这些承载语义的元素设置 `print-color-adjust: exact` |
-| 标题落在页尾、引用或图片被拆到两页 | 标题后禁止分页；引用、提示块、图片、公式、图表、表格行禁止内部分页 |
-| 16.5px 正文在 A4 上偏大 | 打印正文为 14px（五号字 10.5pt），行距 1.85 → 1.7 |
+| 深色模式下导出 PDF 出现黑底或四周大黑边 | macOS 版 Typora 在深色模式下导出 PDF 时，一方面会在 `<head>` 末尾注入 `#typora-wkprint-style`（`@page { margin: 72pt !important }`），使 WebKit 将页面绘制裁剪在 `72pt` 页边距框内、四周留出透明区；另一方面底层 `TyPDFEngine` 会先用当前窗口的深色背景（`#1c1c1c`）填满整张 A4 画布，再把透明边距的页面叠画上去，从而露出四周大黑框。主题在 `@media print` 中使用更高优先级的 `@page :first / :left / :right { margin: 0 !important }` 接管裁剪框，用全页纯白底色覆盖整张纸面（含末页底部留白区），再由 `#write` 与块级内边距控制四边页边距与跨页上下留白，彻底消除黑边 |
+| 页面灰底、浅灰细线在纸上发虚 | 打印时背景改为纯白 `#ffffff`，正文加深到 `#222222`，表格线、引用线、分隔线全部加深 |
+| 长代码行被纸张边缘截断 | 代码块与 YAML 强制自动换行（`pre-wrap`），即使关闭了「代码块自动换行」也不会被裁切 |
+| 高亮、表头、代码块底色在系统打印对话框中丢失 | 对承载语义的底色元素设置 `print-color-adjust: exact` |
+| 标题落在页尾、引用或图片被拆到两页 | 标题后禁止分页（`break-after: avoid-page`）；引用、提示块、图片、公式、图表、表格行、列表项禁止内部分页（`break-inside: avoid`） |
+| 16.5px 正文在 A4 上偏大 | 打印正文缩至 14px（约五号字 10.5pt），行距由 1.85 收紧至 1.7 |
 
-纸张大小、页眉页脚请在 Typora「偏好设置 → 导出 → PDF」中设置；页面四周留白由打印样式内置控制，以避免 WebKit `@page` 外边距露出深色底。
+### 打印页边距说明
+
+- 纸张大小、页眉页脚请在 Typora「偏好设置 → 导出 → PDF」中设置。
+- 为阻止 WebKit `@page` 外边距变成透明区并透出深色底，导出 PDF 的页面四周留白由 `quiet-brick.css` 的 `@media print` 统一接管（默认上下 `46pt`、左右 `50pt`，跨页断点自动保留上下白边），无需在 Typora 导出设置里额外加大页边距。
 
 ## 自定义
 
@@ -97,13 +112,13 @@
 | `--syntax-*` | 代码语法色（注释、关键字、字符串、数字等） |
 | `--alert-*` | 提示块颜色（note、tip、important、warning、caution） |
 
-打印配色在文件末尾的 `body.typora-print` 与 `@media print` 中单独定义，修改屏幕配色不会影响打印效果。
+打印配色与打印页边距在文件末尾的 `body.typora-print` 与 `@media print` 中单独定义，修改屏幕配色不会影响打印效果。如需调整导出 PDF 的页边距，可修改 `@media print` 中 `#write` 的 `padding: 46pt 50pt !important`。
 
 整体字号由 `html { font-size }` 控制，也可以在 Typora 偏好设置中调整。正文行距、最大宽度分别在 `#write` 的 `line-height` 与 `max-width` 中修改。
 
 ## 性能
 
-- 单文件约 24 KB，屏幕样式无动画、过渡、滤镜、阴影或 `will-change`（仅在 `@media print` 中使用少量 `!important` 覆盖 Typora 注入的打印内联样式）。
+- 单文件约 24 KB，日常屏幕样式无 `!important`、动画、过渡、滤镜、阴影或 `will-change`（仅在 `@media print` 中使用必要的 `!important` 与纯白底色延展，用于覆盖 Typora 导出 PDF 时动态注入的 `#typora-wkprint-style` 与 `#style-mac-print`）。
 - 无网络字体、图片与脚本，不产生额外网络请求或持续渲染开销。
 - 只覆盖必要的排版与控件颜色，尽量保留 Typora 默认行为。
 
@@ -129,9 +144,10 @@ quiet-brick-typora-theme/
 
 ## 版本
 
-当前版本：v1.1.0（2026-11-14）
+当前版本：v1.1.1（2026-11-15）
 
-- v1.1.0：新增打印 / PDF 样式；修正浅色次要文字、行号对比度不足；加强细线与选区可见度；修正深色模式下脚注角标、高亮标记、专注模式失效；搜索当前命中原为浅灰底白字，改为砖红底；新增提示块、目录、Mermaid 适配。
+- v1.1.1（2026-11-15）：彻底修复 macOS 版 Typora 在深色模式下导出 PDF 时的四周 `#1c1c1c` 黑边问题（通过 `@page :first / :left / :right` 覆盖 `#typora-wkprint-style` 页边距裁剪框，配合全页纯白底色及多页跨页留白方案）。
+- v1.1.0（2026-11-14）：新增打印 / PDF 样式；修正浅色次要文字、行号对比度不足；加强细线与选区可见度；修正深色模式下脚注角标、高亮标记、专注模式失效；搜索当前命中原为浅灰底白字，改为砖红底；新增提示块、目录、Mermaid 适配。
 - v1.0.0（2026-10-26）：首个版本。
 
 ## 许可证
