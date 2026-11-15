@@ -793,8 +793,11 @@ body {
 }
 
 /* ========== 打印 / 导出 PDF ==========
- * 1. Typora（macOS）导出 PDF 时，会在屏幕媒体下先读取 body.typora-print 的背景色来绘制页边距，
- *    因此这里同时覆盖 body.typora-print 与 @media print，彻底避免深色模式下出现黑边或黑底。
+ * 1. Typora（macOS）在深色模式下导出 PDF 时，底层 TyPDFEngine 会先用当前窗口的深色背景（#1c1c1c）
+ *    涂满整张 PDF 纸面，再把 WebKit 渲染出的页面叠画上去；而 WebKit 默认只在 @page 页边距内部绘制背景，
+ *    导致四周 @page 页边距区域露出底层的 #1c1c1c 大黑边。
+ *    这里通过更高优先级的 @page :first / :left / :right 将 WebKit 页面裁剪框扩展到整张纸面，
+ *    配合铺满全页的白色背景层与内边距排版，彻底消除深色模式下导出 PDF 的四周黑边。
  * 2. 正文加深、细线加粗，灰阶打印机上也能看清表格线、引用线和代码块边界。
  * 3. 代码强制自动换行，避免长行在纸面上被截断。
  * 4. 控制分页：标题不落在页尾，引用、提示块、图片、表格行不被拆开。
@@ -802,10 +805,12 @@ body {
 :root:has(> body.typora-print) {
   color-scheme: light;
   --bg-color: #ffffff;
+  background-color: #ffffff;
 }
 
 body.typora-print {
   color-scheme: light;
+  background-color: #ffffff;
 
   --bg-color: #ffffff;
   --text-color: #222222;
@@ -844,6 +849,19 @@ body.typora-print {
 }
 
 @media print {
+  /* 覆盖 Typora 注入的 #typora-wkprint-style 中的裸 @page 页边距，让白色背景覆盖整张纸面。 */
+  @page :first {
+    margin: 0 !important;
+  }
+
+  @page :left {
+    margin: 0 !important;
+  }
+
+  @page :right {
+    margin: 0 !important;
+  }
+
   :root {
     color-scheme: light;
 
@@ -888,11 +906,63 @@ body.typora-print {
     font-size: 14px;
   }
 
+  html,
+  body,
+  body.typora-export,
+  #write {
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 100vmax #ffffff !important;
+  }
+
+  body::before {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 100vmax #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html body.typora-export #write,
+  body.typora-print #write,
   #write {
     max-width: none;
-    padding-right: 0;
-    padding-left: 0;
+    padding: 46pt 50pt !important;
     line-height: 1.7;
+  }
+
+  /* 利用正内边距与负外边距对消：在同页内保持原有段距不变，在跨页断页处自动留出上下白边。 */
+  #write > p,
+  #write > ul,
+  #write > ol {
+    padding-top: 32pt;
+    margin-top: -32pt;
+    padding-bottom: 32pt;
+    margin-bottom: -32pt;
+  }
+
+  #write > :is(p, ul, ol) + :is(p, ul, ol) {
+    margin-top: calc(1.05em - 64pt);
+  }
+
+  #write > ul > li,
+  #write > ol > li {
+    padding-top: 28pt;
+    margin-top: -28pt;
+    padding-bottom: 28pt;
+    margin-bottom: -28pt;
+    break-inside: avoid;
+  }
+
+  #write > ul > li + li,
+  #write > ol > li + li {
+    margin-top: calc(0.28em - 56pt);
   }
 
   #write p,
@@ -911,8 +981,26 @@ body.typora-print {
     break-inside: avoid;
   }
 
+  #write h1:not(:first-child) {
+    margin-top: 0;
+    padding-top: 36pt;
+  }
+
   #write h2 {
-    margin-top: 1.7em;
+    margin-top: 0;
+    padding-top: 1.7em;
+  }
+
+  #write h3 {
+    margin-top: 0;
+    padding-top: 1.5em;
+  }
+
+  #write h4,
+  #write h5,
+  #write h6 {
+    margin-top: 0;
+    padding-top: 1.3em;
   }
 
   #write blockquote,
